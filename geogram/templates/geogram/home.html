@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load leaflet_tags %}
+<head>
+{% load static %}
+{% load crispy_forms_tags %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <title>Ad's Geogram</title>
+    <style type="text/css">
+      @media (min-width: 992px) {
+  .animate {
+    animation-duration: 0.3s;
+    -webkit-animation-duration: 0.3s;
+    animation-fill-mode: both;
+    -webkit-animation-fill-mode: both;
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  100% {
+    transform:translateY(0rem);
+    opacity: 1;
+  }
+  0% {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes slideIn {
+  0% {
+    -webkit-transform: transform;
+    -webkit-opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    -webkit-opacity: 1;
+  }
+  0% {
+    -webkit-transform: translateY(1rem);
+    -webkit-opacity: 0;
+  }
+}
+
+.slideIn {
+  -webkit-animation-name: slideIn;
+  animation-name: slideIn;
+}
+
+    .leaflet-container {  /* all maps */
+        width:  600px;
+        height: 400px;
+    }
+
+    #main {
+        height: 100%;
+        width: 100%;
+    }
+
+     html, body {
+
+        height: 100%;
+
+        margin: 0px;
+    }
+
+    .btn{/*dent around button*/
+    display: inline-block;
+    position: relative;
+    text-decoration: none;
+    color: rgba(0,0,128,0.9);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    text-align: center;
+    background: #f7f7f7;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.08);
+}
+.btn .fa {/*Button itself*/
+    position: absolute;
+    content: '';
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    vertical-align: middle;
+    left:4px;
+    top: 2px;
+    border-radius: 50%;
+    font-size: 25px;
+    background-image: -webkit-linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
+    background-image: linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.66);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.5), 0 2px 2px rgba(0, 0, 0, 0.19);
+    border-bottom: solid 2px #b5b5b5;
+  }
+
+.btn .fa:active{
+    background-image: -webkit-linear-gradient(#efefef 0%, #d6d6d6 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 2px 2px rgba(0, 0, 0, 0.19);
+}
+
+    .btnd {/*dent around button*/
+    display: inline-block;
+    position: relative;
+    text-decoration: none;
+    color: rgba(168,168,168,0.8);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    text-align: center;
+    background: #f7f7f7;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.08);
+}
+.btnd .fa {/*Button itself*/
+    position: absolute;
+    content: '';
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    vertical-align: middle;
+    left:4px;
+    top: 2px;
+    border-radius: 50%;
+    font-size: 25px;
+    background-image: -webkit-linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
+    background-image: linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.66);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.5), 0 2px 2px rgba(0, 0, 0, 0.19);
+    border-bottom: solid 2px #b5b5b5;
+  }
+
+.boxx {
+  -webkit-box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+-moz-box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+border: 1px solid #dedede;
+padding-right: 0px;
+padding-left: 0px;
+}
+
+.mapboxx {
+-webkit-box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+-moz-box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+padding-right: 0px;
+padding-left: 0px;
+}
+
+.card {
+  border-radius: 0px 0px 0px 0px;
+}
+
+    </style>
+    <script type="text/javascript">
+
+
+    </script>
+</head>
+<body style="background-color:white; font-family: 'Ubuntu', sans-serif;">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'geogram:gghome' %}">Ad's Geogram</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav">
+      <li>
+        <a class="nav-link" href="{% url 'blog:home' %}">Blog</a>
+      </li>
+      <li>
+        <a class="nav-link" href="#">About</a>
+      </li>
+    </ul>
+      <ul class="navbar-nav ml-auto">
+      {% if user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ user.get_full_name|default:user.username }}
+        </a>
+          <!-- Here's the magic. Add the .animate and .slide-in classes to your .dropdown-menu and you're all set! -->
+          <div class="dropdown-menu dropdown-menu-right animate slideIn" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#">Profile</a>
+            <a class="dropdown-item" href="{% url 'geogram:logout' %}">Logout</a>
+          </div>
+        </li>
+        {% else %}
+        <li>
+        <a class="nav-link" href="{% url 'accounts:gglogin' %}">Sign In</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid"  style="height: 92%; width:99%;">
+    <div class="row" style="height: 100%;">
+        <div class="col-md-8 mapboxx">
+            <!-- style="color:#d6d6d6; -->
+          {% leaflet_js %}
+          {% leaflet_css %}
+          <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}"></script>
+          {% leaflet_map "main" callback="mapgetbounds" %}
+    </div>
+        <div class="col-md-4 boxx" style="height: 100%; overflow: hidden;" >
+          <div class="row" style="width: 100%; margin-top: 10px; padding-left: 10px;">
+            <div class="col-md-6" style="color:#A8A8A8;">
+            {% if user.is_authenticated %}
+              <a href="#" class="btn" >
+                <i class="fa fa-map-signs"></i>
+              </a>
+                <b style="color: rgba(0,0,128,0.9)">Start a Trip</b>
+            </div>
+            <div class="col-md-6" style="color:#A8A8A8;">
+              <a href="#" class="btn" data-toggle="modal" data-target="#pinModal">
+                <i class="fa fa-map-pin"></i>
+              </a>
+                <b style="color: rgba(0,0,128,0.9)">Drop a Pin</b>
+            </div>
+          </div>
+          {% else %}
+              <a href="#" class="btnd" >
+                <i class="fa fa-map-signs" style="color: rgba(168,168,168,0.8);"></i>
+              </a>
+                <b style="color: rgba(168,168,168,0.8); display: inline-block; position: relative; top:-25px; ">Start a Trip</b>
+            </div>
+            <div class="col-md-6" style="color:rgba(168,168,168,0.8);">
+              <a href="#" class="btnd">
+                <i class="fa fa-map-pin" style="color: rgba(168,168,168,0.8);"></i>
+              </a>
+                <b style="color: rgba(168,168,168,0.8); display: inline-block;position: relative; top:-25px; ">Drop a Pin</b>
+            </div>
+          </div>
+          {% endif %}
+          <div style="padding-right: 15px;padding-left: 15px;">
+          <hr/>
+        </div>
+        <div class="div-cards" style="overflow: auto;box-sizing: content-box;height: auto;max-height: 100%;">
+        {% for pin in pins.all %}
+            <div class="card mb-3 p-0" style="max-width: 100%;max-height: 100%;margin: 0px !important; cursor: zoom-in;" id="{{ pin.id }}" onclick="flytopin(this);">
+            <div class="row no-gutters">
+              <div class="col-sm-4" style="height:150px;overflow: hidden;">
+                <img src="{{ pin.pinphoto.url}}" class="card-img" style="max-width:100%;border-radius: 0px;">
+              </div>
+              <div class="col-sm-8">
+                <div class="card-body">
+                  <h5 class="card-title">{{pin.pinuser.first_name}} {{pin.pinuser.last_name}}: </h5>
+                  <p class="card-text">{{pin.pinsummary}}</p>
+                  {% if pin.pintimeago < 60 %}
+                  <p class="card-text"><small class="text-muted">Last updated {{ pin.pintimeago }} mins ago</small></p>
+                  {% elif pin.pintimeago < 120 %}
+                  <p class="card-text"><small class="text-muted">Last updated {{ pin.pinhours }} hour ago</small></p>
+                  {% elif pin.pintimeago < 1440 %}
+                  <p class="card-text"><small class="text-muted">Last updated {{ pin.pinhours }} hours ago</small></p>
+                  {% elif pin.pintimeago < 2880 %}
+                  <p class="card-text"><small class="text-muted">Last updated {{ pin.pindays }} day ago</small></p>
+                  {% else %}
+                  <p class="card-text"><small class="text-muted">Last updated {{ pin.pindays }} days ago</small></p>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+          </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="pinModal" tabindex="-1" role="dialog" aria-labelledby="pinModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="padding-right: 15px;padding-left: 15px;">
+        <h5 class="modal-title" id="pinModalLabel">Drop a new Pin!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" id="formpin" enctype="multipart/form-data">
+        {% csrf_token %}
+<!--           <div class="form-row">
+            <input type="datetime-local" class="form-control" id="formvisitdate" name="formvisitdate">
+          </div>
+        </br> -->
+          <div class="form-row">
+            <!-- <input type="file" name="pinimage" id="pinimage" accept="image/*"> -->
+            {{ form.pinimage|as_crispy_field }}
+          </div>
+          </br>
+            <div class="form-row">
+              <div class="form-group col-md-6 mb-0">
+                {{ form.longitude|as_crispy_field }}
+              </div>
+              <div class="form-group col-md-6 mb-0">
+                {{ form.latitude|as_crispy_field }}
+              </div>
+              </br>
+            <!-- <input type="text" class="form-control" id="pinlongitude" value="0.0" name="pinlongitude"> -->
+
+            <!-- <input type="text" class="form-control" id="pinlatitude" value="0.0" name="pinlatitude"> <br> -->
+            <a class="btn" onclick="getLocation();"><i class="fa fa-crosshairs" style="color:rgba(0,0,128,0.9); margin-top:15px;"></i></a>
+            <b style="color: rgba(0,0,128,0.9); display: inline-block; position: relative;margin-top:30px;">Get Location</b>
+          </div>
+          </br>
+          <div class="form-row">
+            {{ form.pinbody|as_crispy_field }}
+            <!-- <textarea class="form-control" id="formpinstory" style="height: 250px;" name="formpinstory"></textarea> -->
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer" style="padding-right: 15px;padding-left: 15px;">
+        <a class="btn" data-dismiss="modal"><i class="fa fa-times" style="color:red;"></i></a>
+        <a class="btn" data-dismiss="modal" onclick="document.getElementById('formpin').submit()"><i class="fa fa-map-pin" style="color:rgba(0,0,128,0.9)"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+{% if message %}
+<script type="text/javascript">console.log('{{ message }}');</script>
+
+{% endif %}
+
+</body>
+<script type="text/javascript">
+    var pinlist = [];
+  function mapgetbounds (map, options) {
+
+        function gg(f,l){
+            var pin = {};
+            pin[f.properties.pk] = [f.geometry.coordinates[0],f.geometry.coordinates[1]];
+            pinlist.push(pin);
+        }
+        var geojsonLayer = new L.GeoJSON.AJAX("{% url 'geogram:pins_request' %}",{onEachFeature:gg});
+        geojsonLayer.addTo(map);
+
+/*      map.on("moveend", function (e){
+        var north = map.getBounds().getNorth();
+        var south = map.getBounds().getSouth();
+        var east = map.getBounds().getEast();
+        var west = map.getBounds().getWest();
+      $.ajax({
+                url: "http://41.185.95.64/geogram/",
+                type: "POST",
+                data: {
+                    e : east,
+                    w : west,
+                    s : south,
+                    n : north,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                dataType: "json",
+                jsonp: false,
+                success : function(json) {
+                    $("#div-cards").load("#div-cards");
+                    console.log("Successfully sent the URL to Django");
+                },
+                error : function(xhr,errmsg,err) {
+                    console.log("Could not send URL to Django. Error: " + xhr.status + ": " + xhr.responseText);
+                }
+            });
+  });*/
+};
+
+    var map;
+
+    window.addEventListener("map:init", function(e) {
+      map = e.detail.map;
+    });
+
+        function flytopin(ele){
+    var id = ele.id;
+    pinlist.forEach(function (item,index) {
+        for(var key in item) {
+            if (key == id){
+                map.flyTo([item[key][1],item[key][0]],13);
+                console.log("{{ pin.pinuser }}");
+            };
+        };
+    });
+};
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    console.log("Browser does not support Geolocation.");
+  };
+};
+
+function showPosition(position) {
+    document.getElementById("pinlongitude").value = position.coords.longitude;
+    document.getElementById("pinlatitude").value = position.coords.latitude;
+};
+
+</script>
+</html>

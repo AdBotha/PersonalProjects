@@ -1,0 +1,4 @@
+venv
+.sock
+media
+.pyc

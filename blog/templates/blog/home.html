@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <title>Adrian's Blog</title>
+    <style>
+
+    .navbar, .dp-tr {
+   background-color: transparent;
+   background: transparent;
+   border-color: transparent;
+   color:white;
+}
+
+a.active {
+  background-color: transparent;
+   background: transparent;
+   border-color: transparent;
+   color:white;
+}
+
+.dropdown-menu > li > a:hover, .dropdown-menu > li > a:focus {
+  background-color: transparent;
+   background: transparent;
+   border-color: transparent;
+   color:white;
+}
+
+.navbar li { color: #000 } 
+
+
+        .hero-image {
+          background-color: #cccccc;
+          height: 500px;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+          position: relative;
+          top:-20px;
+        }
+
+        .hero-text {
+          text-align: center;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          color: white;
+        }
+
+          html {
+    height: 100%;
+}
+body {
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+    .btntwitter:hover .fa-twitter:before {
+        color: #1DA1F2;
+    }
+
+    .btngithub:hover .fa-github:before {
+        color: #211F1F;
+    }
+
+    </style>
+  </head>
+
+  <body style="background-color:#40545d; font-family: 'Ubuntu', sans-serif; background: rgb(64,84,93);
+background: linear-gradient(0deg, rgba(64,84,93,1) 31%, rgba(120,161,179,1) 74%, rgba(199,199,199,1) 100%);">
+      	        {% load static %}
+
+    <div class="hero-image" style="background-image: url('{% static 'blog/compass.jpg' %}'">
+        <div class="hero-text">
+            <h1 style="font-size:50px">Welcome to Adrian's Blog</h1>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid" style="color: #40545d;" >
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mynav">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+              <a class="navbar-brand" href="{% url 'blog:home' %}" style="color:white;">
+                  Ad's Blog
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="mynav">
+              <ul class="nav navbar-nav">
+                  <li class="dropdown dp-tr">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color:white;">Projects <span class="caret"></span></a>
+                      <ul class="dropdown-menu dp-tr">
+                        <li ><a href="{% url 'geogram:gghome' %}" style="color:white;">Project 1 - Geogram</a></li>
+                      </ul>
+                  </li>
+                  <li style="color:white;">
+                      <a href="{% url 'sitepages:about' %}" style="color:white;">About Me</a>
+                  </li>
+
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                  <li style="color:white;">
+                      <a class="btntwitter" href="http://www.twitter.com/adbotha101" style="color:white;"><i class="fa fa-twitter fa-lg"></i> Twitter</a>
+                  </li>
+                  <li style="color:white;">
+                      <a class="btngithub" href="https://github.com/AdBotha" style="color:white;"><i class="fa fa-github fa-lg"></i> Github</a>
+                  </li>
+                </ul>
+
+            </div>
+        </div>
+
+    </nav>
+
+    <div class="container" style="color:white; width: 100%; text-align: center;">
+        
+        <h1><b>Latests Posts</b></h1>
+        <hr />
+
+        {% for post in posts.all %}
+
+        <a href="{% url 'blog:post_detail' post.id %}" style="color:#7e959b;"> <h2><b>{{ post.title }}</b></h2></a>
+        <h4><span class="glyphicon glyphicon-time" aria-hidden="true"></span> {{ post.shortpubdate}}</h4>
+        <br/>
+        <img src="{{ post.image.url}}" class="img-responsive center-block" style="max-height:200px;"/>
+        <br/>
+        {{ post.summary_body}} <a href="{% url 'blog:post_detail' post.id %}"> [... ] </a>
+        <br/>
+        <br/>
+        <hr />
+        {% endfor %}
+    </div>
+  </body>
+</html>
