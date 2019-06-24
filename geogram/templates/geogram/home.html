@@ -55,6 +55,11 @@
   }
 }
 
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+
 .slideIn {
   -webkit-animation-name: slideIn;
   animation-name: slideIn;
@@ -210,50 +215,66 @@ padding-left: 0px;
 </nav>
 
 <div class="container-fluid"  style="height: 92%; width:99%;">
-    <div class="row" style="height: 100%;">
-        <div class="col-md-8 mapboxx">
-            <!-- style="color:#d6d6d6; -->
-          {% leaflet_js %}
-          {% leaflet_css %}
-          <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}"></script>
-          {% leaflet_map "main" callback="mapgetbounds" %}
+  <div class="row" style="height: 100%;">
+    <div class="col-md-8 mapboxx">
+        <!-- style="color:#d6d6d6; -->
+      {% leaflet_js %}
+      {% leaflet_css %}
+      <script type="text/javascript" src="{% static 'dist/leaflet.ajax.js' %}"></script>
+      {% leaflet_map "main" callback="mapgetbounds" %}
     </div>
-        <div class="col-md-4 boxx" style="height: 100%; overflow: hidden;" >
-          <div class="row" style="width: 100%; margin-top: 10px; padding-left: 10px;">
-            <div class="col-md-6" style="color:#A8A8A8;">
-            {% if user.is_authenticated %}
+    <div class="col-md-4 boxx" style="height: 100%;margin-right:0px;overflow: hidden;" >
+      <div class="row" style="width: 100%; margin-top: 10px;margin-right:0px;margin-left: 0px;height: 100%; padding: 0;">
+        {% if user.is_authenticated %}
+        <div class="col-md-6" style="color:#A8A8A8;max-height: 60px;">
+
               <a href="#" class="btn" >
                 <i class="fa fa-map-signs"></i>
               </a>
                 <b style="color: rgba(0,0,128,0.9)">Start a Trip</b>
-            </div>
-            <div class="col-md-6" style="color:#A8A8A8;">
+        </div>
+        <div class="col-md-6" style="color:#A8A8A8;max-height: 60px;">
               <a href="#" class="btn" data-toggle="modal" data-target="#pinModal">
                 <i class="fa fa-map-pin"></i>
               </a>
                 <b style="color: rgba(0,0,128,0.9)">Drop a Pin</b>
-            </div>
-          </div>
+        </div>
           {% else %}
+        <div class="col-md-6" style="color:#A8A8A8;max-height: 60px;">
               <a href="#" class="btnd" >
                 <i class="fa fa-map-signs" style="color: rgba(168,168,168,0.8);"></i>
               </a>
                 <b style="color: rgba(168,168,168,0.8); display: inline-block; position: relative; top:-25px; ">Start a Trip</b>
-            </div>
-            <div class="col-md-6" style="color:rgba(168,168,168,0.8);">
+        </div>
+        <div class="col-md-6" style="color:rgba(168,168,168,0.8);max-height: 60px;">
               <a href="#" class="btnd">
                 <i class="fa fa-map-pin" style="color: rgba(168,168,168,0.8);"></i>
               </a>
                 <b style="color: rgba(168,168,168,0.8); display: inline-block;position: relative; top:-25px; ">Drop a Pin</b>
-            </div>
-          </div>
-          {% endif %}
-          <div style="padding-right: 15px;padding-left: 15px;">
-          <hr/>
         </div>
-        <div class="div-cards" style="overflow: auto;box-sizing: content-box;height: auto;max-height: 100%;">
-        {% for pin in pins.all %}
-            <div class="card mb-3 p-0" style="max-width: 100%;max-height: 100%;margin: 0px !important; cursor: zoom-in;" id="{{ pin.id }}" onclick="flytopin(this);">
+          {% endif %}
+        <div style="padding:0px 15px 0px 15px; margin:10px 0px 10px 0px; width: 100%;">
+          <hr style="margin:0px;">
+        </div>
+        <div id="div-pincard" style="display:none;height: calc(100% - 100px);max-width: 100%;border: 1px solid rgba(0, 0, 0, 0.125);width: 100%; position:relative; margin: 5px 0px 5px 0px; overflow: auto;" >
+              <div class="pinimage-container" style="position: relative;">
+                <button type="button" class="close" aria-label="Close" id="closepin" style="position: absolute; top:5px;right: 10px;">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <img src="" id="pincard-image" style="width: 100%;border-bottom: 1px solid rgba(0, 0, 0, 0.125);">
+              </div>
+              </br>
+              <div class="pincard-body" style="margin:15px;">
+                <b><h5 id="pincard-user"></h5></b>
+                </br>
+                <i><p><small id="pincard-time"></small></p></i>
+                </br>
+                <p id="pincard-body"></p>
+              </div>
+        </div>
+        <div class="div-cards" style="overflow-y: auto;box-sizing: content-box;height: calc(100% - 100px);max-height: 100%; position:relative; margin: 5px 0px 5px 0px;" id="allcards">
+            {% for pin in pins.all %}
+          <div class="card mb-3 p-0" data-pinuser="{{ pin.pinuser.id }}" style="max-width: 100%;max-height: 100%;margin: 0px !important; cursor: zoom-in;" id="{{ pin.id }}" onclick="flytopin(this);">
             <div class="row no-gutters">
               <div class="col-sm-4" style="height:150px;overflow: hidden;">
                 <img src="{{ pin.pinphoto.url}}" class="card-img" style="max-width:100%;border-radius: 0px;">
@@ -278,10 +299,12 @@ padding-left: 0px;
             </div>
           </div>
           {% endfor %}
-          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
+
 
 <div class="modal fade" id="pinModal" tabindex="-1" role="dialog" aria-labelledby="pinModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -340,6 +363,7 @@ padding-left: 0px;
 </body>
 <script type="text/javascript">
     var pinlist = [];
+    document.getElementById("allcards").style.height = document.getElementById('allcards').scrollHeight+250;
   function mapgetbounds (map, options) {
 
         function gg(f,l){
@@ -390,11 +414,49 @@ padding-left: 0px;
         for(var key in item) {
             if (key == id){
                 map.flyTo([item[key][1],item[key][0]],13);
-                console.log("{{ pin.pinuser }}");
+                var imgsrc = $("div[id="+id+"]").find('img').attr('src');
+                var pinuser = $("div[id="+id+"]").find('h5').html();
+                var pintime = $("div[id="+id+"]").find('small').html()
+                var pinuserid = $("div[id="+id+"]").data('pinuser');
+
+                console.log(pinuserid+": "+pinuser+" "+pintime);
+                $.ajax({
+                  url: "http://41.185.95.64/geogram/getpin/",
+                  type: "POST",
+                  data: {
+                    pk: id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                  },
+                  dataType:'json',
+                  success: function(json) {
+                      var response = JSON.parse(JSON.stringify(json[0].fields));
+                      console.log(response.pinbody);
+                      $("#allcards").children('.card').each(function () {
+                        $(this).hide();
+                      });
+                      $("#pincard-image").attr('src',imgsrc);
+                      $("#pincard-user").html(pinuser);
+                      $("#pincard-time").html(pintime);
+                      $("#pincard-body").html(response.pinbody);
+                      $("#div-pincard").show(1000);
+                  },
+                   error : function(xhr,errmsg,err) {
+                    console.log("Could not send URL to Django. Error: " + xhr.status + ": " + xhr.responseText);
+                }
+                });
             };
         };
     });
 };
+
+$("#closepin").on("click", function(){
+    $("#div-pincard").fadeOut();
+    $("#allcards").children('div').each(function () {
+                  $(this).show(); // "this" is the current element in the loop
+                  });
+});
+
+
 
 function getLocation() {
   if (navigator.geolocation) {
@@ -408,6 +470,5 @@ function showPosition(position) {
     document.getElementById("pinlongitude").value = position.coords.longitude;
     document.getElementById("pinlatitude").value = position.coords.latitude;
 };
-
 </script>
 </html>

@@ -21,7 +21,7 @@ def geogramsignup(request):
 				user = User.objects.get(username=request.POST['username'])
 				return render(request,'accounts/signup.html',{'error':'Username is already taken.'})
 			except User.DoesNotExist:
-				user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password1'],first_name=request.POST['firstname'],last_name=request.POST['lastname'])
+				user = User.objects.create_user(username=request.POST['username'], email=request.POST['email'], password=request.POST['password1'],first_name=request.POST['firstname'],last_name=request.POST['lastname'])
 				login(request,user)
 				return redirect('geogram:gghome')
 		else:

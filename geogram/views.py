@@ -18,8 +18,11 @@ def geogramhome(request):
             pinloc = Point([lon,lat])
 
             PinDrop.objects.create(pinuser=request.user,pinphoto=form.cleaned_data['pinimage'],pinbody=form.cleaned_data['pinbody'],pinlocation=pinloc)
-            pindrops = PinDrop.objects.order_by('-pindate')
             return redirect('geogram:gghome')
+        else:
+            form = newPinForm()
+            pindrops = PinDrop.objects.order_by('-pindate')
+            return render(request,'geogram/home.html',{'pins':pindrops,'form':form})
     else:
         form = newPinForm()
         pindrops = PinDrop.objects.order_by('-pindate')
@@ -32,3 +35,9 @@ def logout_request(request):
 def pins_request(request):
     pins = serialize('geojson',PinDrop.objects.all())
     return HttpResponse(pins,content_type='json')
+
+def getpin(request):
+    if request.method == 'POST':
+        index = request.POST['pk']
+        pin = serialize('json',PinDrop.objects.filter(pk=index))
+        return HttpResponse(pin,content_type='json')

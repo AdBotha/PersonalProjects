@@ -147,7 +147,7 @@ body {
                    {{ error }}
             </div>
             {% endif %}
-            <form class="form-signin" method="POST" action="{% url 'geogram:gghome' %}">
+            <form class="form-signin" method="POST">
             {% csrf_token %}
               <div class="form-label-group">
                 <input type="text" id="inputUsername" name="username" class="form-control" placeholder="Username" required autofocus>
