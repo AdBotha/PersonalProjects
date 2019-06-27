@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load leaflet_tags %}
+<head>
+{% load static %}
+{% load crispy_forms_tags %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu" rel="stylesheet">
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous" />
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+    <title>Ad's Geogram</title>
+    <style type="text/css">
+      @media (min-width: 992px) {
+  .animate {
+    animation-duration: 0.3s;
+    -webkit-animation-duration: 0.3s;
+    animation-fill-mode: both;
+    -webkit-animation-fill-mode: both;
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  100% {
+    transform:translateY(0rem);
+    opacity: 1;
+  }
+  0% {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes slideIn {
+  0% {
+    -webkit-transform: transform;
+    -webkit-opacity: 0;
+  }
+  100% {
+    -webkit-transform: translateY(0);
+    -webkit-opacity: 1;
+  }
+  0% {
+    -webkit-transform: translateY(1rem);
+    -webkit-opacity: 0;
+  }
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+}
+
+.slideIn {
+  -webkit-animation-name: slideIn;
+  animation-name: slideIn;
+}
+
+    .leaflet-container {  /* all maps */
+        width:  600px;
+        height: 400px;
+    }
+
+    #main {
+        height: 100%;
+        width: 100%;
+    }
+
+     html, body {
+
+        height: 100%;
+
+        margin: 0px;
+    }
+
+    .btn{/*dent around button*/
+    display: inline-block;
+    position: relative;
+    text-decoration: none;
+    color: rgba(0,0,128,0.9);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    text-align: center;
+    background: #f7f7f7;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.08);
+}
+.btn .fa {/*Button itself*/
+    position: absolute;
+    content: '';
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    vertical-align: middle;
+    left:4px;
+    top: 2px;
+    border-radius: 50%;
+    font-size: 25px;
+    background-image: -webkit-linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
+    background-image: linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.66);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.5), 0 2px 2px rgba(0, 0, 0, 0.19);
+    border-bottom: solid 2px #b5b5b5;
+  }
+
+.btn .fa:active{
+    background-image: -webkit-linear-gradient(#efefef 0%, #d6d6d6 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 2px 2px rgba(0, 0, 0, 0.19);
+}
+
+    .btnd {/*dent around button*/
+    display: inline-block;
+    position: relative;
+    text-decoration: none;
+    color: rgba(168,168,168,0.8);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    text-align: center;
+    background: #f7f7f7;
+    box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.08);
+}
+.btnd .fa {/*Button itself*/
+    position: absolute;
+    content: '';
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    vertical-align: middle;
+    left:4px;
+    top: 2px;
+    border-radius: 50%;
+    font-size: 25px;
+    background-image: -webkit-linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
+    background-image: linear-gradient(#e8e8e8 0%, #d6d6d6 100%);
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.66);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.5), 0 2px 2px rgba(0, 0, 0, 0.19);
+    border-bottom: solid 2px #b5b5b5;
+  }
+
+.boxx {
+  -webkit-box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+-moz-box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+border: 1px solid #dedede;
+padding-right: 0px;
+padding-left: 0px;
+}
+
+.mapboxx {
+-webkit-box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+-moz-box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+box-shadow: -1px 10px 29px -7px rgba(0,0,0,0.25);
+padding-right: 0px;
+padding-left: 0px;
+}
+
+.card {
+  border-radius: 0px 0px 0px 0px;
+}
+
+    </style>
+    <script type="text/javascript">
+
+
+    </script>
+</head>
+<body style="background-color:white; font-family: 'Ubuntu', sans-serif;">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'geogram:gghome' %}">Ad's Geogram</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav">
+      <li>
+        <a class="nav-link" href="{% url 'blog:home' %}">Blog</a>
+      </li>
+      <li>
+        <a class="nav-link" href="{% url 'geogram:stats' %}">Stats</a>
+      </li>
+      <li>
+        <a class="nav-link" href="#">About</a>
+      </li>
+    </ul>
+      <ul class="navbar-nav ml-auto">
+      {% if user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ user.get_full_name|default:user.username }}
+        </a>
+          <!-- Here's the magic. Add the .animate and .slide-in classes to your .dropdown-menu and you're all set! -->
+          <div class="dropdown-menu dropdown-menu-right animate slideIn" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#">Profile</a>
+            <a class="dropdown-item" href="{% url 'geogram:logout' %}">Logout</a>
+          </div>
+        </li>
+        {% else %}
+        <li>
+        <a class="nav-link" href="{% url 'accounts:gglogin' %}">Sign In</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid"  style="height: 92%; width:99%;">
+  <div class="row" style="height: 100%;">
+    <div class="col-md-6">
+      <h5 style="margin-top: 10px;">Visits per Country:</h5>
+    <canvas id="myChart" width="400" height="400"></canvas>
+  </div>
+  <div class="col-md-6">
+  </div>
+  </div>
+</div>
+<script type="text/javascript">
+
+  function dynamicColors() {
+    var r = Math.floor(Math.random() * 255);
+    var g = Math.floor(Math.random() * 255);
+    var b = Math.floor(Math.random() * 255);
+    return "rgba(" + r + "," + g + "," + b + ", 0.5)";
+}
+
+function poolColors(a) {
+    var pool = [];
+    for(i = 0; i < a; i++) {
+        pool.push(dynamicColors());
+    }
+    return pool;
+}
+
+
+
+                  $.ajax({
+                  url: "http://41.185.95.64/geogram/getstats/",
+                  type: "GET",
+                  dataType:'json',
+                  success: function(json) {
+                      labels = json.country_stats.labels
+                      data = json.country_stats.data
+                      var ctx = document.getElementById('myChart').getContext('2d');
+                      var myChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: '# of Visits',
+                                data: data,
+                                backgroundColor: poolColors(data.length),
+                                borderColor: poolColors(data.length),
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                              scales: {
+                                 xAxes: [{
+                                    display: false
+                                 }],
+                                 yAxes: [{
+                                    display: false
+                                 }]
+                              }
+                        }
+                      });
+                  },
+                   error : function(xhr,errmsg,err) {
+                    console.log("Could not send URL to Django. Error: " + xhr.status + ": " + xhr.responseText);
+                }
+                });
+</script>
+
+</html>

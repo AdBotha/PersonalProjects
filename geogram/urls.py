@@ -8,4 +8,6 @@ urlpatterns = [
 	path('logout/',views.logout_request,name='logout'),
 	path('pins/',views.pins_request,name='pins_request'),
     path('getpin/',views.getpin,name='getpin'),
+    path('getstats/',views.getstats,name='getstats'),
+    path('stats/',views.stats,name='stats'),
 ]

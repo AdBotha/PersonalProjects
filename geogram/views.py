@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import PinDrop
+from .models import PinDrop,Countries
 from django.contrib.gis.geos import Point
 from .forms import newPinForm
 from django.contrib.auth.models import User
@@ -7,6 +7,7 @@ from django.contrib.auth import logout
 from django.core.serializers import serialize
 from django.http import HttpResponse
 from django.db import connection
+import json
 
 def geogramhome(request):
     if request.method == 'POST':
@@ -41,3 +42,28 @@ def getpin(request):
         index = request.POST['pk']
         pin = serialize('json',PinDrop.objects.filter(pk=index))
         return HttpResponse(pin,content_type='json')
+
+def getstats(request):
+    pins = PinDrop.objects.all()
+    country_dict = {}
+    stats = {}
+    stats['country_stats'] = {}
+    stats['country_stats']['labels'] = []
+    stats['country_stats']['data'] = []
+    for pin in pins:
+        intersectcheck = Countries.objects.filter(geom__intersects=Point([pin.pinlocation.x,pin.pinlocation.y]))
+        for country in intersectcheck:
+            c_name = country.name
+            if c_name in country_dict:
+                country_dict[c_name] += 1
+            else:
+                country_dict[c_name] = 1
+
+    for key in country_dict:
+        stats['country_stats']['labels'].append(key)
+        stats['country_stats']['data'].append(country_dict[key])
+
+    return HttpResponse(json.dumps(stats))
+
+def stats(request):
+    return render(request,'geogram/stats.html')

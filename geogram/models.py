@@ -48,3 +48,22 @@ class PinDrop(models.Model):
 
 	def latitude(self):
 		return self.pinlocation.y
+
+
+class Countries(models.Model):
+    country_type = models.CharField(max_length=17)
+    name = models.CharField(max_length=36)
+    abbrev = models.CharField(max_length=13)
+    formal_name = models.CharField(max_length=52)
+    pop_est = models.BigIntegerField()
+    gdp_md_est = models.FloatField()
+    pop_year = models.IntegerField()
+    lastcensus = models.IntegerField()
+    gdp_year = models.IntegerField()
+    continent = models.CharField(max_length=23)
+    region_un = models.CharField(max_length=23)
+    region_wb = models.CharField(max_length=26)
+    geom = models.MultiPolygonField(srid=4326)
+
+    class Meta:
+        ordering = ["name","geom"]

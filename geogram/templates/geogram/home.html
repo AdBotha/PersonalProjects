@@ -189,6 +189,9 @@ padding-left: 0px;
         <a class="nav-link" href="{% url 'blog:home' %}">Blog</a>
       </li>
       <li>
+        <a class="nav-link" href="{% url 'geogram:stats' %}">Stats</a>
+      </li>
+      <li>
         <a class="nav-link" href="#">About</a>
       </li>
     </ul>
@@ -228,7 +231,7 @@ padding-left: 0px;
         {% if user.is_authenticated %}
         <div class="col-md-6" style="color:#A8A8A8;max-height: 60px;">
 
-              <a href="#" class="btn" >
+              <a href="" class="btn" >
                 <i class="fa fa-map-signs"></i>
               </a>
                 <b style="color: rgba(0,0,128,0.9)">Start a Trip</b>
@@ -241,13 +244,13 @@ padding-left: 0px;
         </div>
           {% else %}
         <div class="col-md-6" style="color:#A8A8A8;max-height: 60px;">
-              <a href="#" class="btnd" >
+              <a href="" class="btnd" title="Login or Register to start a trip" data-toggle="tripinactive">
                 <i class="fa fa-map-signs" style="color: rgba(168,168,168,0.8);"></i>
               </a>
                 <b style="color: rgba(168,168,168,0.8); display: inline-block; position: relative; top:-25px; ">Start a Trip</b>
         </div>
         <div class="col-md-6" style="color:rgba(168,168,168,0.8);max-height: 60px;">
-              <a href="#" class="btnd">
+              <a href="" class="btnd" title="Login or Register to drop a pin" data-toggle="pininactive">
                 <i class="fa fa-map-pin" style="color: rgba(168,168,168,0.8);"></i>
               </a>
                 <b style="color: rgba(168,168,168,0.8); display: inline-block;position: relative; top:-25px; ">Drop a Pin</b>
@@ -282,7 +285,7 @@ padding-left: 0px;
               <div class="col-sm-8">
                 <div class="card-body">
                   <h5 class="card-title">{{pin.pinuser.first_name}} {{pin.pinuser.last_name}}: </h5>
-                  <p class="card-text">{{pin.pinsummary}}</p>
+                  <p class="card-text">{{pin.pinsummary}} ...</p>
                   {% if pin.pintimeago < 60 %}
                   <p class="card-text"><small class="text-muted">Last updated {{ pin.pintimeago }} mins ago</small></p>
                   {% elif pin.pintimeago < 120 %}
@@ -355,14 +358,36 @@ padding-left: 0px;
     </div>
   </div>
 </div>
-{% if message %}
-<script type="text/javascript">console.log('{{ message }}');</script>
-
-{% endif %}
 
 </body>
 <script type="text/javascript">
     var pinlist = [];
+
+    var PinIcon = L.Icon.extend({
+    options: {
+        iconSize:     [28, 28],
+        iconAnchor:   [14, 28],
+    }
+});
+
+    var greenpin = new PinIcon({iconUrl: "{% static 'pins/green.png' %}"});
+    var pinkpin  = new PinIcon({iconUrl: "{% static 'pins/pink.png' %}"});
+    var bluepin  = new PinIcon({iconUrl: "{% static 'pins/blue.png' %}"});
+
+
+    function getrandompin (){
+    var randompin = Math.floor(Math.random() * (3 - 1 + 1)) + 1;
+
+    if (randompin == 1){
+      return greenpin
+    } else if (randompin == 2) {
+      return pinkpin
+    } else {
+      return bluepin
+    }
+
+  };
+
     document.getElementById("allcards").style.height = document.getElementById('allcards').scrollHeight+250;
   function mapgetbounds (map, options) {
 
@@ -370,8 +395,13 @@ padding-left: 0px;
             var pin = {};
             pin[f.properties.pk] = [f.geometry.coordinates[0],f.geometry.coordinates[1]];
             pinlist.push(pin);
+            var randompin = Math.floor(Math.random() * (3 - 1 + 1)) + 1;
         }
-        var geojsonLayer = new L.GeoJSON.AJAX("{% url 'geogram:pins_request' %}",{onEachFeature:gg});
+        var geojsonLayer = new L.GeoJSON.AJAX("{% url 'geogram:pins_request' %}",
+          {pointToLayer:function(feature, latlng) {
+              return L.marker(latlng, {icon: getrandompin(), id: feature.properties.pk});
+              },onEachFeature:gg});
+
         geojsonLayer.addTo(map);
 
 /*      map.on("moveend", function (e){
@@ -410,6 +440,7 @@ padding-left: 0px;
 
         function flytopin(ele){
     var id = ele.id;
+
     pinlist.forEach(function (item,index) {
         for(var key in item) {
             if (key == id){
@@ -419,7 +450,6 @@ padding-left: 0px;
                 var pintime = $("div[id="+id+"]").find('small').html()
                 var pinuserid = $("div[id="+id+"]").data('pinuser');
 
-                console.log(pinuserid+": "+pinuser+" "+pintime);
                 $.ajax({
                   url: "http://41.185.95.64/geogram/getpin/",
                   type: "POST",
@@ -430,7 +460,6 @@ padding-left: 0px;
                   dataType:'json',
                   success: function(json) {
                       var response = JSON.parse(JSON.stringify(json[0].fields));
-                      console.log(response.pinbody);
                       $("#allcards").children('.card').each(function () {
                         $(this).hide();
                       });
@@ -455,6 +484,9 @@ $("#closepin").on("click", function(){
                   $(this).show(); // "this" is the current element in the loop
                   });
 });
+
+/*$('data-toggle="pininactive"').tooltip();
+$('data-toggle="tripinactive"').tooltip();*/
 
 
 

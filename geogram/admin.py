@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PinDrop
+from .models import PinDrop,Countries
 from leaflet.admin import LeafletGeoAdmin
 
 class PinsAdmin(LeafletGeoAdmin):
@@ -20,4 +20,9 @@ class PinsAdmin(LeafletGeoAdmin):
 	adminvisitdate.short_description = 'Date Visited'
 	adminusername.short_description = 'Username'
 
+class CountriesAdmin(LeafletGeoAdmin):
+	model = Countries
+	list_display = ['name']
+
 admin.site.register(PinDrop, PinsAdmin)
+admin.site.register(Countries, CountriesAdmin)
