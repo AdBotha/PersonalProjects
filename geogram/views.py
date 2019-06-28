@@ -44,10 +44,18 @@ def getpin(request):
         return HttpResponse(pin,content_type='json')
 
 def getstats(request):
-    pins = PinDrop.objects.all()
+    pins = PinDrop.objects.order_by('pindate')
+
     country_dict = {}
+    pins_dict = {}
     stats = {}
     stats['country_stats'] = {}
+    stats['user_stats'] = {}
+    stats['total_pins'] = {}
+    stats['total_pins']['labels'] = []
+    stats['total_pins']['data'] = []
+    stats['user_stats']['labels'] = []
+    stats['user_stats']['data'] = []
     stats['country_stats']['labels'] = []
     stats['country_stats']['data'] = []
     for pin in pins:
@@ -59,9 +67,40 @@ def getstats(request):
             else:
                 country_dict[c_name] = 1
 
+        pinsdate = pin.shortpindate()
+        if pinsdate in pins_dict:
+            pins_dict[pinsdate] += 1
+        else:
+            pins_dict[pinsdate] = 1
+
     for key in country_dict:
         stats['country_stats']['labels'].append(key)
         stats['country_stats']['data'].append(country_dict[key])
+
+    totalpins = 0
+    for key in pins_dict:
+        totalpins += pins_dict[key]
+        stats['total_pins']['labels'].append(key)
+        stats['total_pins']['data'].append(totalpins)
+
+    if request.user.is_authenticated:
+        userpins = PinDrop.objects.filter(pinuser_id=request.user.pinuser_id)
+        country_dict.clear()
+        for pin in userpins:
+            intersectcheck = Countries.objects.filter(geom__intersects=Point([pin.pinlocation.x,pin.pinlocation.y]))
+            for country in intersectcheck:
+                c_name = country.name
+                if c_name in country_dict:
+                    country_dict[c_name] += 1
+                else:
+                    country_dict[c_name] = 1
+
+        for key in country_dict:
+            stats['user_stats']['labels'].append(key)
+            stats['user_stats']['data'].append(country_dict[key])
+    else:
+        stats['user_stats']['labels'].append(0)
+        stats['user_stats']['data'].append(0)
 
     return HttpResponse(json.dumps(stats))
 

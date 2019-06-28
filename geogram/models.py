@@ -32,7 +32,7 @@ class PinDrop(models.Model):
 			return math.floor(timediff.total_seconds()/86400)
 
 	def shortpindate(self):
-		return self.pindate.strftime('%e %b %Y')
+		return self.pindate.strftime('%e-%b-%Y')
 
 	def shortvisitdate(self):
 		return self.pinvisiteddate.strftime('%e %b %Y')

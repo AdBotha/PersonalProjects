@@ -128,6 +128,7 @@
     text-align: center;
     background: #f7f7f7;
     box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.08);
+    top: 15px;
 }
 .btnd .fa {/*Button itself*/
     position: absolute;
@@ -341,8 +342,10 @@ padding-left: 0px;
             <!-- <input type="text" class="form-control" id="pinlongitude" value="0.0" name="pinlongitude"> -->
 
             <!-- <input type="text" class="form-control" id="pinlatitude" value="0.0" name="pinlatitude"> <br> -->
-            <a class="btn" onclick="getLocation();"><i class="fa fa-crosshairs" style="color:rgba(0,0,128,0.9); margin-top:15px;"></i></a>
+            <div class= "form-group">
+            <a class="btn" onclick="getLocation();"><i class="fa fa-crosshairs" style="color:rgba(0,0,128,0.9); "></i></a>
             <b style="color: rgba(0,0,128,0.9); display: inline-block; position: relative;margin-top:30px;">Get Location</b>
+          </div>
           </div>
           </br>
           <div class="form-row">
@@ -489,18 +492,17 @@ $("#closepin").on("click", function(){
 $('data-toggle="tripinactive"').tooltip();*/
 
 
-
 function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition);
   } else {
-    console.log("Browser does not support Geolocation.");
+    alert("Browser does not support Geolocation.");
   };
 };
 
 function showPosition(position) {
-    document.getElementById("pinlongitude").value = position.coords.longitude;
-    document.getElementById("pinlatitude").value = position.coords.latitude;
+    document.getElementById("id_longitude").value = Math.round(position.coords.longitude * Math.pow(10,6)) / Math.pow(10,6);
+    document.getElementById("id_latitude").value = Math.round(position.coords.latitude * Math.pow(10,6)) / Math.pow(10,6);
 };
 </script>
 </html>

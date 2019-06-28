@@ -170,6 +170,13 @@ padding-left: 0px;
   border-radius: 0px 0px 0px 0px;
 }
 
+canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+    width: 800px;
+}
+
     </style>
     <script type="text/javascript">
 
@@ -200,7 +207,7 @@ padding-left: 0px;
       <ul class="navbar-nav ml-auto">
       {% if user.is_authenticated %}
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" data-userid="{{ user.id }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ user.get_full_name|default:user.username }}
         </a>
           <!-- Here's the magic. Add the .animate and .slide-in classes to your .dropdown-menu and you're all set! -->
@@ -219,15 +226,26 @@ padding-left: 0px;
   </div>
 </nav>
 
-<div class="container-fluid"  style="height: 92%; width:99%;">
-  <div class="row" style="height: 100%;">
-    <div class="col-md-6">
+<div class="container-fluid"  style="height: 92%; width:99%; margin-top: 10px;">
+  <div class="row" style="height: 250px;">
+    <div class="col-md-6 text-center" style="border: 1px solid rgba(0, 0, 0, 0.125);padding: 10px;">
       <h5 style="margin-top: 10px;">Visits per Country:</h5>
-    <canvas id="myChart" width="400" height="400"></canvas>
+    <canvas id="myChart" style="width: 400px;height: 400px; left:50% !important;"></canvas>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-6 text-center" style="height: : 250px;width: 45% !important; border: 1px solid rgba(0, 0, 0, 0.125);padding: 10px;">
+    <h5 style="margin-top: 10px;">Number of Pins Dropped:</h5>
+    <canvas id="myChart_totalpins" style="width: 400px;height: 400px; left:50% !important;"></canvas>
   </div>
+  <div class="w-100"></div>
+
+    <div class="col-md-6 text-center" id="userstats" style="height: : 250px;width: 42%; border: 1px solid rgba(0, 0, 0, 0.125); padding: 10px; display: none;">
+      <h5 style="margin-top: 10px;">Your Pin Drop Stats:</h5>
+      <canvas id="myChart_user" style="width: 400px;height: 400px; left:50% !important;"></canvas>
   </div>
+  <div class="col-md-6 text-center" id="seasonstats" style="height: : 250px;width: 42%; border: 1px solid rgba(0, 0, 0, 0.125); padding: 10px; margin:">
+    <h5 style="margin-top: 10px;">Seasonal Stats:</h5>
+  </div>
+</div>
 </div>
 <script type="text/javascript">
 
@@ -238,6 +256,7 @@ padding-left: 0px;
     return "rgba(" + r + "," + g + "," + b + ", 0.5)";
 }
 
+
 function poolColors(a) {
     var pool = [];
     for(i = 0; i < a; i++) {
@@ -245,45 +264,104 @@ function poolColors(a) {
     }
     return pool;
 }
-
-
-
-                  $.ajax({
-                  url: "http://41.185.95.64/geogram/getstats/",
-                  type: "GET",
-                  dataType:'json',
-                  success: function(json) {
-                      labels = json.country_stats.labels
-                      data = json.country_stats.data
-                      var ctx = document.getElementById('myChart').getContext('2d');
-                      var myChart = new Chart(ctx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: labels,
-                            datasets: [{
-                                label: '# of Visits',
-                                data: data,
-                                backgroundColor: poolColors(data.length),
-                                borderColor: poolColors(data.length),
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                              scales: {
-                                 xAxes: [{
-                                    display: false
-                                 }],
-                                 yAxes: [{
-                                    display: false
-                                 }]
-                              }
-                        }
-                      });
-                  },
-                   error : function(xhr,errmsg,err) {
-                    console.log("Could not send URL to Django. Error: " + xhr.status + ": " + xhr.responseText);
-                }
-                });
+$.ajax({
+  url: "http://41.185.95.64/geogram/getstats/",
+  type: "GET",
+  dataType:'json',
+  success: function(json) {
+      country_labels = json.country_stats.labels
+      country_data = json.country_stats.data
+      if (json.user_stats.labels == 0) {
+        user_labels = 0;
+        user_data = 0;
+      } else {
+      user_labels = json.user_stats.labels
+      user_data = json.user_stats.data
+      }
+      totalpins_labels = json.total_pins.labels
+      totalpins_data = json.total_pins.data
+      var ctx = document.getElementById('myChart').getContext('2d');
+      var ctx_totalpins = document.getElementById('myChart_totalpins').getContext('2d');
+      var myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: country_labels,
+            datasets: [{
+                label: '# of Visits',
+                data: country_data,
+                backgroundColor: poolColors(country_data.length),
+                borderWidth: 1
+            }]
+        },
+        options: {
+              responsive: false,
+              scales: {
+                 xAxes: [{
+                    display: false
+                 }],
+                 yAxes: [{
+                    display: false
+                 }]
+              },
+        }
+      });
+      if (user_labels != 0) {
+            $('#userstats').show();
+            var ctx_user = document.getElementById('myChart_user').getContext('2d');
+            var myChart2 = new Chart(ctx_user, {
+        type: 'doughnut',
+        data: {
+            labels: user_labels,
+            datasets: [{
+                label: '# of Visits',
+                data: user_data,
+                backgroundColor: poolColors(user_data.length),
+                borderWidth: 1
+            }]
+        },
+        options: {
+              responsive: false,
+              scales: {
+                 xAxes: [{
+                    display: false
+                 }],
+                 yAxes: [{
+                    display: false
+                 }]
+              },
+        }
+      });} else {
+              $("#seasonstats").removeClass('col-md-6 text-center').addClass('col-md-12 text-center');
+            }
+            var ctx_totalpins = document.getElementById('myChart_totalpins').getContext('2d');
+            var myChart3 = new Chart(ctx_totalpins, {
+        type: 'line',
+        data: {
+            labels: totalpins_labels,
+            datasets: [{
+                label: '# of Pins Dropped',
+                data: totalpins_data,
+                fill : false,
+                backgroundColor: '#2584E4',
+                borderColor: '#2584E4',
+                borderWidth : 3
+            }]
+        },
+        options: {
+              responsive: false,
+              scales: {
+                 xAxes: [{
+                 }],
+                 yAxes: [{
+                 }]
+              },
+        }
+      });
+  },
+   error : function(xhr,errmsg,err) {
+    console.log("Could not send URL to Django. Error: " + xhr.status + ": " + xhr.responseText);
+}
+});
 </script>
 
 </html>
